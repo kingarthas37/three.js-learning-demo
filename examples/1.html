@@ -15,7 +15,7 @@
 
 
 
-<script type="text/javascript" src="build/three.min.js"></script>
+<script type="text/javascript" src="../build/three.min.js"></script>
 
 <script type="text/javascript">
 
@@ -41,7 +41,7 @@
     light.position.set(0,0,1);
     scene.add(light);
 
-    var mapUrl = 'public/images/1.jpg';
+    var mapUrl = '../public/images/1.jpg';
     var map = THREE.ImageUtils.loadTexture(mapUrl);
 
     var material = new THREE.MeshPhongMaterial({map:map});
