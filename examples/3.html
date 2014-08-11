@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>example</title>
+
+</head>
+
+
+<body>
+
+
+
+<div id="container" style="width:98%; height:98%; overflow:hidden; position:absolute; background-color:#000000"></div>
+
+
+<script src="../libs/Three.js"></script>
+<script src="../libs/Tween.js"></script>
+<script src="../libs/jquery-1.6.4.js"></script>
+<script src="../libs/jquery.mousewheel.js"></script>
+<script src="../libs/RequestAnimationFrame.js"></script>
+<script src="../sim/sim.js"></script>
+
+<script>
+
+    TweenApp = function()
+    {
+        Sim.App.call(this);
+    }
+
+    TweenApp.prototype = new Sim.App();
+
+
+TweenApp.prototype.init = function(param) {
+    Sim.App.prototype.init.call(this,param);
+    var light = new THREE.PointLight(0xffffff,1,100);
+    light.position.set(0,0,20);
+    this.scene.add(light);
+    this.camera.position.z =6.67;
+
+    var movingBaall = new MovingBall();
+    movingBaall.init();
+
+    this.addObject(movingBaall);
+    this.movingBall = movingBaall;
+
+};
+
+TweenApp.prototype.update = function() {
+    TWEEN.update();
+    Sim.App.prototype.update.call(this);
+};
+
+TweenApp.prototype.handleMouseUp = function(x,y) {
+    this.movingBall.animate();
+};
+
+    MovingBall = function()
+    {
+        Sim.Object.call(this);
+    }
+
+
+MovingBall.prototype = new Sim.Object();
+MovingBall.prototype.init = function() {
+    var BALL_TEXTURE = '../images/ball_texture.jpg';
+    var geometry = new THREE.SphereGeometry(1,32,32);
+    var material = new THREE.MeshPhongMaterial({
+        map:THREE.ImageUtils.loadTexture(BALL_TEXTURE)
+    });
+    var mesh = new THREE.Mesh(geometry,material);
+    mesh.position.x = -3.333;
+    this.setObject3D(mesh);
+};
+
+MovingBall.prototype.animate = function() {
+    var newpos,easefn;
+    if(this.object3D.position.x > 0) {
+        newpos = this.object3D.position.x - 6.667;
+        easefn = MovingBall.useBounceFunction ? TWEEN.Easing.Bounce.EaseOut : TWEEN.Easing.Quadratic.EaseOut;
+    }else {
+        newpos  = this.object3D.position.x + 6.67;
+        easefn = MovingBall.useBounceFunction ? TWEEN.Easing.Bounce.EaseIn : TWEEN.Easing.Quadratic.EaseIn;
+    }
+    new TWEEN.Tween(this.object3D.position).to({x:newpos},2000).easing(easefn).start();
+};
+
+    MovingBall.useBounceFunction = false;
+
+
+    var renderer = null;
+    var scene = null;
+    var camera = null;
+    var mesh = null;
+
+    $(document).ready(
+            function() {
+                var container = document.getElementById("container");
+                var app = new TweenApp();
+                app.init({ container: container });
+                app.run();
+            }
+    );
+
+
+</script>
+
+</body>
+</html>
